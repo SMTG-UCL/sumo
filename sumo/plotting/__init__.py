@@ -10,7 +10,7 @@ import numpy as np
 
 import matplotlib.pyplot
 from matplotlib.collections import LineCollection
-from matplotlib import rc, rcParams
+from matplotlib import rcParams
 from pkg_resources import resource_filename
 
 colour_cache = {}
@@ -142,6 +142,7 @@ def curry_power_tick(times_sign=r'\times'):
         return power_tick(val, pos, times_sign=times_sign)
     return f
 
+
 def power_tick(val, pos, times_sign=r'\times'):
     """Custom power ticker function. """
     if val == 0:
@@ -155,6 +156,7 @@ def power_tick(val, pos, times_sign=r'\times'):
     return r'$\mathregular{{{:.1f} {} 10^{:2d}}}$'.format(coeff,
                                                           times_sign,
                                                           exponent)
+
 
 def rgbline(x, y, red, green, blue, alpha=1, linestyles="solid",
             linewidth=2.5):
@@ -197,3 +199,29 @@ def rgbline(x, y, red, green, blue, alpha=1, linestyles="solid",
     lc = LineCollection(seg, colors=colours, rasterized=True,
                         linewidth=linewidth, linestyles=linestyles)
     return lc
+
+
+def draw_themed_line(y, ax, orientation='horizontal'):
+    """Draw a horizontal line using the theme settings
+
+    Args:
+        y (float): Position of line in data coordinates
+        ax (Axes): Matplotlib Axes on which line is drawn
+
+    """
+
+    # Note to future developers: feel free to add plenty more optional
+    # arguments to this to mess with linestyle, zorder etc.
+    # Just .update() the options dict
+
+    themed_line_options = dict(color=rcParams['grid.color'],
+                               linestyle='--', dashes=(5, 2), zorder=0,
+                               linewidth=rcParams['ytick.major.width'])
+
+    if orientation == 'horizontal':
+        ax.axhline(y, **themed_line_options)
+    elif orientation == 'vertical':
+        ax.axvline(y, **themed_line_options)
+    else:
+        raise ValueError(
+            'Line orientation "{}" not supported'.format(orientation))
